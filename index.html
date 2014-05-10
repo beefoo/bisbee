@@ -9,18 +9,34 @@
   <title>Bisbee</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-
   <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/vendor/jquery-ui-1.10.4.custom.min.css">
   <link rel="stylesheet" href="css/main.css">
   <script src="js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
 <body>
-  <p>Hello world! This is HTML5 Boilerplate.</p>
-
+  <div id="main" class="container skin" data-modes="skin mask view">
+    <div id="image-layers" class="image-layers">
+      <img id="past" class="image-layer" src="img/past.jpg" />
+      <img id="present" class="image-layer draggable skinnable" src="img/present.jpg" />      
+    </div>
+    <div id="canvas-layers" class="canvas-layers">     
+      <canvas id="canvas-masked" class="canvas-masked" width="1024" height="742"></canvas>
+      <canvas id="canvas-mask" class="canvas-mask active" width="1024" height="742"></canvas>
+    </div>
+    <div id="controls" class="controls">
+      <div id="slider" class="slider"></div>
+    </div>
+    <div id="buttons" class="buttons">
+      <a href="#" class="button mask-mode-button">Done!</a>
+      <a href="#" class="button mask-toggle-button" data-on="Edit" data-off="Done!">Done!</a>
+    </div>
+  </div>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+  <script src="js/vendor/jquery-ui-1.10.4.custom.min.js"></script>
+  <script src="js/vendor/jquery.ui.touch-punch.min.js"></script>
+  <script src="js/vendor/jquery.hammer-full.min.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
