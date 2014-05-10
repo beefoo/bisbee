@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Circles</title>
+    <style>
+        html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script>
+
+
+// First, create an object containing LatLng and population for each location.
+var locationmap = {};
+locationmap['one'] = {
+  center: new google.maps.LatLng(31.441639, -109.914676),
+  hit: 15
+};
+
+locationmap['two'] = {
+  center: new google.maps.LatLng(31.441529,-109.915126),
+  hit: 15
+};
+
+var locationCircle;
+
+function initialize() {
+  // Create the map.
+  var mapOptions = {
+    center: new google.maps.LatLng(31.44298,-109.915069),
+    zoom: 16
+  };
+
+  var map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+  // Construct the circle for each value in locationmap.
+  for (var location in locationmap) {
+    var locationOptions = {
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      map: map,
+      center: locationmap[location].center,
+      radius: locationmap[location].hit
+    };
+    // Add the circle for this city to the map.
+    locationCircle = new google.maps.Circle(locationOptions);
+  }
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+</head>
+<body>
+<div id="map-canvas"></div>
+</body>
+</html>
