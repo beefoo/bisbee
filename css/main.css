@@ -15,37 +15,29 @@ a {
 }
 
 /* Animations */
+@-webkit-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
 @-webkit-keyframes fadeInHalf {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0.5;
-  }
+  0% { opacity: 0; }
+  100% { opacity: 0.5; }
 }
 @keyframes fadeInHalf {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0.5;
-  }
+  0% { opacity: 0; }
+  100% { opacity: 0.5; }
 }
 @-webkit-keyframes fadeOutHalf {
-  0% {
-    opacity:  0.5;
-  }
-  100% {
-    opacity: 0;
-  }
+  0% { opacity:  0.5; }
+  100% { opacity: 0; }
 }
 @keyframes fadeOutHalf {
-  0% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 0;
-  }
+  0% { opacity: 0.5; }
+  100% { opacity: 0; }
 }
 @-webkit-keyframes fadeInUp {
   0% {
@@ -98,9 +90,9 @@ a {
   top: 50%;
   left: 50%;
   width: 1024px;
-  height: 742px;
+  height: 768px;
   margin-left: -512px;
-  margin-top: -371px;
+  margin-top: -384px;
   overflow: hidden;
 }
 
@@ -112,18 +104,18 @@ a {
   left: 50%;
 }
 .image-layers {
-  width: 1424px;
-  height: 1016px;
-  margin-left: -712px;
-  margin-top: -508px;
-}
-#past {
   width: 1024px;
-  height: 742px;
+  height: 768px;
   margin-left: -512px;
-  margin-top: -371px; 
+  margin-top: -384px;
 }
-#present {
+.image-layer.fixed-layer {
+  width: 1024px;
+  height: 768px;
+  margin-left: -512px;
+  margin-top: -384px;
+}
+.image-layer.draggable {
   width: 1224px;
   height: 816px;
   margin-left: -612px;
@@ -133,6 +125,19 @@ a {
   -webkit-animation: fadeInHalf 5s;
   animation: fadeInHalf 5s;
 }
+#webcam-image-layers,
+.camera #image-layers,
+.camera-mask #image-layers {
+  display: none;
+}
+.camera #webcam-image-layers,
+.camera-mask #webcam-image-layers {
+  display: block;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
 
 /* Canvas Layers */
 .canvas-layers {
@@ -140,7 +145,7 @@ a {
   top: 0;
   left: 0;
   width: 1024px;
-  height: 742px;
+  height: 768px;
   display: none;
 }
 .canvas-mask,
@@ -149,7 +154,7 @@ a {
   top: 0;
   left: 0;
   width: 1024px;
-  height: 742px;
+  height: 768px;
   opacity: 0;
   z-index: 0;
   cursor: crosshair;
@@ -199,11 +204,28 @@ a {
 }
 
 /* Mask mode */
-.mask .mask-mode-button.active {
-  opacity: 0;
+.mask .mask-mode-button.active,
+.mask .camera-mask-toggle-button.active {
+  display: none;
 }
-.mask .canvas-layers {
+.mask #canvas-layers {
   display: block;
+}
+
+/* Camera mode */
+.camera .mask-mode-button.active,
+.camera .mask-toggle-button.active,
+.camera .camera-mask-toggle-button.active {
+  display: none;
+}
+
+/* Camera mask mode */
+.camera-mask #webcam-canvas-layers {
+  display: block;
+}
+.camera-mask .mask-mode-button.active,
+.camera-mask .mask-toggle-button.active {
+  display: none;
 }
 
 /* Buttons */
@@ -215,12 +237,20 @@ a {
 }
 .button {
   font-size: 1em;
-  padding: 1em 2em;
+  height: 76px;
+  line-height: 76px;
+  padding: 0 2em;
   background: rgba(0,0,0,0.6);
   color: #fff;
   display: none;
   -webkit-transition: background 0.5s;
   transition: background 0.5s;
+  margin-left: 0.5em;
+  vertical-align: bottom;
+}
+.image-button {
+  padding: 0;
+  background: none;
 }
 .button.active {
   display: inline-block;
@@ -229,6 +259,11 @@ a {
 .button:hover {
   background: rgba(0,0,0,0.9);
 }
+.image-button:hover {
+  background: none;
+}
+
+
 
 .clearfix:before,
 .clearfix:after {

@@ -8,28 +8,41 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bisbee</title>
   <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/vendor/jquery-ui-1.10.4.custom.min.css">
   <link rel="stylesheet" href="css/main.css">
   <script src="js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
 <body>
-  <div id="main" class="container skin" data-modes="skin mask view">
-    <div id="image-layers" class="image-layers">
-      <img id="past" class="image-layer" src="img/past.jpg" />
-      <img id="present" class="image-layer draggable skinnable" src="img/present.jpg" />      
+  <div id="main" class="container skin" data-modes="skin mask camera camera-mask">
+    <div id="image-layers" class="image-layers active">
+      <img id="past" class="image-layer fixed-layer" src="img/past.jpg" />
+      <img id="present" class="image-layer draggable skinnable" src="img/present.jpg" />           
+    </div>
+    <div id="webcam-image-layers" class="image-layers">
+      <canvas id="webcam-canvas-image" width="1024" height="768"></canvas>
+      <img id="empty" class="image-layer fixed-layer" src="img/room_empty.jpg" />
+      <img id="webcam-capture" class="image-layer fixed-layer skinnable" src="" />
+      <video id="webcam-video" class="image-layer fixed-layer skinnable" autoplay></video>
     </div>
     <div id="canvas-layers" class="canvas-layers">     
-      <canvas id="canvas-masked" class="canvas-masked" width="1024" height="742"></canvas>
-      <canvas id="canvas-mask" class="canvas-mask active" width="1024" height="742"></canvas>
+      <canvas id="canvas-masked" class="canvas-masked" width="1024" height="768"></canvas>
+      <canvas id="canvas-mask" class="canvas-mask active" width="1024" height="768"></canvas>
+    </div>
+    <div id="webcam-canvas-layers" class="canvas-layers">     
+      <canvas id="webcam-canvas-masked" class="canvas-masked" width="1024" height="768"></canvas>
+      <canvas id="webcam-canvas-mask" class="canvas-mask active" width="1024" height="768"></canvas>
     </div>
     <div id="controls" class="controls">
       <div id="slider" class="slider"></div>
     </div>
     <div id="buttons" class="buttons">
       <a href="#" class="button mask-mode-button">Done!</a>
+      <a href="#" class="button image-button camera-capture-button"><img src="img/shutter_btn.png" /></a>
+      <a href="#" class="button image-button camera-mode-button"><img src="img/camera_btn.png" /></a>
       <a href="#" class="button mask-toggle-button" data-on="Edit" data-off="Done!">Done!</a>
+      <a href="#" class="button camera-mask-toggle-button" data-on="Edit" data-off="Done!">Done!</a>   
     </div>
   </div>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>

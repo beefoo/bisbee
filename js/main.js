@@ -14,25 +14,39 @@
       this.initDraggable();
       this.initControls();
       this.initButtons();
-      this.initCanvasMask();
+      this.initCanvasMask('#canvas-mask','#canvas-masked','#present');
+      this.initVideoFeed();
     };
     
     App.prototype.initButtons = function(){
       var that = this;
       $('.mask-mode-button').hammer().on('tap',function(e){
-        e.preventDefault();
+        e.gesture.preventDefault();
         that.doMaskMode();
       });
       $('.mask-toggle-button').hammer().on('tap',function(e){
-        e.preventDefault();
+        e.gesture.preventDefault();
         that.toggleMask();
+      });
+      $('.camera-mode-button').hammer().on('tap',function(e){
+        e.gesture.preventDefault();
+        that.doCameraMode();
+      });
+      $('.camera-capture-button').hammer().on('tap',function(e){
+        e.gesture.preventDefault();
+        that.captureImage();
+        that.doCameraMaskMode();
+      });
+      $('.camera-mask-toggle-button').hammer().on('tap',function(e){
+        e.gesture.preventDefault();
+        that.toggleCameraMask();
       });
     };
     
-    App.prototype.initCanvasMask = function(){
+    App.prototype.initCanvasMask = function(mask_selector, masked_selector, image_masked){
       var that = this,
-          $canvas_mask = $('#canvas-mask'),
-          $canvas_masked = $('#canvas-masked');
+          $canvas_mask = $(mask_selector),
+          $canvas_masked = $(masked_selector);
           
       // init lastXY
       this.lastX = null;
@@ -40,29 +54,31 @@
       
       // init mask context
       this.mask = $canvas_mask[0].getContext("2d");
-      /* this.mask.lineWidth = 20;
-      this.mask.strokeStyle = "#dd1a1a";
-      this.mask.lineCap = 'round'; */
       
       // init masked context
       this.masked = $canvas_masked[0].getContext("2d");
-      this.masked.lineWidth = 20;
-      this.masked.lineCap = 'round';   
-      $('#present').one('load', function() {
-        that.masked.drawImage($('#present')[0],0,0,1024,742);
-        console.log('loaded')
-      }).each(function() {
-        if(this.complete) $(this).load();
-      });
+      
+      // draw images
+      if (image_masked) {
+        $(image_masked).one('load', function() {
+          that.masked.drawImage($(image_masked)[0],0,0,1024,768);
+          console.log('loaded', image_masked);
+        }).each(function() {
+          if(this.complete) $(this).load();
+        });
+      }     
       
       // drag events
       $canvas_mask.hammer().on('dragstart',function(e){
+        e.gesture.preventDefault();
         that.drawStart($(this), e);
       });
       $canvas_mask.hammer().on('drag',function(e){
+        e.gesture.preventDefault();
         that.draw($(this), e);
       });
       $canvas_mask.hammer().on('dragend',function(e){
+        e.gesture.preventDefault();
         that.drawStop($(this), e);
       });
     };
@@ -78,7 +94,7 @@
           that.activateButton('.mask-mode-button');
         },
         slide: function(event, ui ) {
-          var opacity = 1- parseFloat(ui.value/1000);
+          var opacity = parseFloat(ui.value/1000);
           that.setOpacity(opacity);
         }
       });
@@ -94,8 +110,42 @@
       });
     };
     
+    App.prototype.initVideoFeed = function(){
+      var that = this,
+          gUM;
+          
+      this.video = document.getElementById('webcam-video');
+      this.localMediaStream = null;
+          
+      if (this.hasGetUserMedia()){
+        // Init video
+        console.log('initializing video feed...');        
+        gUM = Modernizr.prefixed('getUserMedia', navigator);        
+        gUM({video: true}, function(stream) {
+          that.video.src = window.URL.createObjectURL(stream);
+          that.localMediaStream = stream;
+        }, function(er){ console.log('error', er)});        
+      }
+    };
+    
     App.prototype.activateButton = function(selector){
       $(selector).addClass('active');
+    };
+    
+    App.prototype.captureImage = function(){
+      var canvas = $('#webcam-canvas-image')[0],
+          context = canvas.getContext('2d'),
+          $image = $('#webcam-capture'),
+          $video = $('#webcam-video');
+      if (this.localMediaStream) {        
+        context.drawImage(this.video, 0, 0, 1024, 768);
+        $image.attr('src', canvas.toDataURL('image/webp'));
+        // Disable video
+        $video.hide();
+        $video[0].pause();
+        $video[0].src = '';
+        this.localMediaStream.stop();
+      }
     };
 
     App.prototype.deactivateButton = function(selector){
@@ -116,14 +166,59 @@
       }, 2000);
       // update slider            
       $('#slider .ui-slider-handle').animate({
+        left: '0%'
+      }, 2000, function(){
+        $('.slider').slider( "value", 0 );
+      });
+    };
+    
+    App.prototype.doCameraMaskMode = function(){
+      var $main = $('#main'),
+          modes = $main.attr('data-modes');
+      // change main class mode
+      $main.removeClass(modes);
+      $main.addClass('camera-mask');
+      // update buttons
+      this.deactivateButton('.camera-capture-button');
+      this.deactivateButton('.camera-mask-toggle-button');   
+      // update skinnable
+      $('.skinnable').animate({
+        opacity: 1
+      }, 2000);
+      // update slider            
+      $('#slider .ui-slider-handle').animate({
         left: '100%'
       }, 2000, function(){
         $('.slider').slider( "value", 1000 );
       });
     };
     
+    App.prototype.doCameraMode = function(){
+      var $main = $('#main'),
+          modes = $main.attr('data-modes');      
+      // change main class mode
+      $main.removeClass(modes);
+      $main.addClass('camera');
+      // update buttons
+      this.deactivateButton('.camera-mode-button');
+      this.activateButton('.camera-capture-button');
+      // update skinnable
+      $('.skinnable').animate({
+        opacity: 0.5
+      }, 2000);
+      // update slider            
+      $('#slider .ui-slider-handle').animate({
+        left: '50%'
+      }, 2000, function(){
+        $('.slider').slider( "value", 500 );
+      });
+      // init canvas mask
+      this.initCanvasMask('#webcam-canvas-mask','#webcam-canvas-masked','#empty');
+    };
+    
     App.prototype.drawStart = function($parent, e){
       this.activateButton('.mask-toggle-button');
+      this.activateButton('.camera-mask-toggle-button');
       
       this.updateLastPos($parent, e);
       
@@ -168,14 +263,18 @@
       // console.log('last stroke', this.lastX, this.lastY);
     };
     
+    App.prototype.hasGetUserMedia = function() {
+      return !!Modernizr.prefixed('getUserMedia', navigator);
+    };
+    
     App.prototype.setOpacity = function(value){
       $('.skinnable').css({'opacity': value});
     };
     
-    App.prototype.toggleMask = function(){
-      var $mask = $('#canvas-mask'),
-          $masked = $('#canvas-masked'),
-          $button = $('.mask-toggle-button');
+    App.prototype.toggleCameraMask = function(){
+      var $mask = $('#webcam-canvas-mask'),
+          $masked = $('#webcam-canvas-masked'),
+          $button = $('.camera-mask-toggle-button');
       if ($masked.hasClass('active')) {
         $masked.removeClass('active');
         $mask.addClass('active');
@@ -184,6 +283,25 @@
       } else {
         $masked.addClass('active');
         $mask.removeClass('active');
+        $button.text($button.attr('data-on'));
+      }
+    };
+    
+    App.prototype.toggleMask = function(){
+      var $mask = $('#canvas-mask'),
+          $masked = $('#canvas-masked'),
+          $button = $('.mask-toggle-button'),
+          $webcam_button = $('.camera-mode-button');
+      if ($masked.hasClass('active')) {
+        $masked.removeClass('active');
+        $mask.addClass('active');
+        $webcam_button.removeClass('active');
+        $button.text($button.attr('data-off'));
+        
+      } else {
+        $masked.addClass('active');
+        $mask.removeClass('active');
+        $webcam_button.addClass('active');
         $button.text($button.attr('data-on'));
       }
     };
