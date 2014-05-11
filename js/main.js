@@ -40,15 +40,20 @@
       
       // init mask context
       this.mask = $canvas_mask[0].getContext("2d");
-      this.mask.lineWidth = 20;
+      /* this.mask.lineWidth = 20;
       this.mask.strokeStyle = "#dd1a1a";
-      this.mask.lineCap = 'round';
+      this.mask.lineCap = 'round'; */
       
       // init masked context
       this.masked = $canvas_masked[0].getContext("2d");
       this.masked.lineWidth = 20;
-      this.masked.lineCap = 'round';
-      this.masked.drawImage($('#present')[0],0,0,1024,742);
+      this.masked.lineCap = 'round';   
+      $('#present').one('load', function() {
+        that.masked.drawImage($('#present')[0],0,0,1024,742);
+        console.log('loaded')
+      }).each(function() {
+        if(this.complete) $(this).load();
+      });
       
       // drag events
       $canvas_mask.hammer().on('dragstart',function(e){
@@ -135,18 +140,31 @@
     App.prototype.draw = function($parent, e){  
       this.updateLastPos($parent, e);
       
-      this.mask.lineTo(this.lastX,this.lastY);           
-      this.mask.stroke();
+      var gradient_red = this.mask.createRadialGradient(this.lastX, this.lastY, 0, this.lastX, this.lastY, 20);
+        gradient_red.addColorStop(0, 'rgba(221, 26, 26, 1)');
+        gradient_red.addColorStop(1, 'rgba(221, 26, 26, 0)');
+        
+      this.mask.arc(this.lastX, this.lastY, 20, 0, 2 * Math.PI);
+      this.mask.fillStyle = gradient_red;
+      this.mask.fill();
       
-      this.masked.lineTo(this.lastX,this.lastY);           
-      this.masked.stroke();
+      var gradient_black = this.masked.createRadialGradient(this.lastX, this.lastY, 0, this.lastX, this.lastY, 20);
+        gradient_black.addColorStop(0, 'rgba(0, 0, 0, 1)');
+        gradient_black.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        
+      this.masked.arc(this.lastX, this.lastY, 20, 0, 2 * Math.PI);
+      this.masked.fillStyle = gradient_black;
+      this.masked.fill();
       
       // console.log('line to', this.lastX, this.lastY);
     };
     
     App.prototype.drawStop = function($parent, e){     
-      this.masked.globalCompositeOperation = 'source-over';
+      this.mask.closePath();
       
+      this.masked.globalCompositeOperation = 'source-over';
+      this.masked.closePath();
+
       // console.log('last stroke', this.lastX, this.lastY);
     };
     
