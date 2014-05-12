@@ -15,8 +15,8 @@
   <script src="js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
 <body>
-  <div id="main" class="container skin" data-modes="skin mask camera camera-mask">
-    <div id="image-layers" class="image-layers active">
+  <div id="main" class="container" data-modes="skin mask camera camera-mask">
+    <div id="image-layers" class="image-layers">
       <img id="past" class="image-layer fixed-layer" src="img/past.jpg" />
       <img id="present" class="image-layer draggable skinnable" src="img/present.jpg" />           
     </div>
@@ -37,12 +37,70 @@
     <div id="controls" class="controls">
       <div id="slider" class="slider"></div>
     </div>
+    <div id="buttons-left" class="buttons buttons-left">
+      <a href="#" class="button image-button caption-button"><img src="img/btn_caption.png" /></a>
+    </div>
     <div id="buttons" class="buttons">
-      <a href="#" class="button mask-mode-button">Done!</a>
+      <a href="#" class="button image-button mask-mode-button"><img src="img/btn_checkmark.png" /></a>
       <a href="#" class="button image-button camera-capture-button"><img src="img/shutter_btn.png" /></a>
       <a href="#" class="button image-button camera-mode-button"><img src="img/camera_btn.png" /></a>
-      <a href="#" class="button mask-toggle-button" data-on="Edit" data-off="Done!">Done!</a>
-      <a href="#" class="button camera-mask-toggle-button" data-on="Edit" data-off="Done!">Done!</a>   
+      <a href="#" class="button image-button mask-toggle-button mask-done-button"><img src="img/btn_checkmark.png" /></a>
+      <a href="#" class="button image-button mask-toggle-button mask-back-button"><img src="img/back_btn.png" /></a>
+      <a href="#" class="button image-button camera-mask-toggle-button camera-mask-done-button"><img src="img/btn_checkmark.png" /></a>
+      <a href="#" class="button image-button camera-mask-toggle-button camera-mask-back-button"><img src="img/back_btn.png" /></a>
+      <a href="#" class="button image-button camera-submit-button"><img src="img/btn_arrow_advance.png" /></a>
+    </div>
+    <div id="caption" class="caption">
+      <h2>A woman feeds pigeons in Boston Common c. 1915. 
+      The Common dates from 1634 and is the oldest city park in the United States.</h2>      
+      <h4>Photo credit: The Library Of Congress</h4>
+      <a href="#" class="button image-button close-button"><img src="img/close_btn.png" /></a>
+    </div>
+    <div id="share" class="share">
+      <div class="alert">
+        <form>
+          <input class="big" type="text" placeholder="Add Your Caption Here" />
+          <input class="small" type="text" placeholder="Add Your Name Here" />
+        </form>
+        <p>
+          <img src="img/share.png" />
+        </p>
+        <div class="btn-group clearfix">
+          <a href="#" class="btn submit-button">Submit</a>
+          <a href="#" class="btn">Cancel</a>
+        </div>
+      </div>
+    </div>
+    <div id="intro-steps" class="intro-steps">
+      <div id="step-title" class="step active">
+        <img src="img/title.jpg" class="image-cover next-step" />
+      </div>
+      <div id="step-location" class="step">
+        <div class="alert">
+          <p>"(re)Collect (re)Create Bisbee"<br />
+          Would Like to Use Your Location</p>
+          <div class="btn-group clearfix">
+            <a href="#" class="btn next-step">Allow</a>
+            <a href="#" class="btn">Don't Allow</a>
+          </div>
+        </div>
+      </div>
+      <div id="step-map" class="step">
+        <img src="img/location_map.jpg" class="image-cover next-step" />
+      </div>
+      <div id="step-alert" class="step">
+        <div class="alert">
+          <p>You've discovered a vintage<br />
+          Bisbee photograph!</p>
+          <p>
+            <img src="img/past_thumb.jpg" />
+          </p>
+          <div class="btn-group clearfix">
+            <a href="#" class="btn next-step">View</a>
+            <a href="#" class="btn">Ignore</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>

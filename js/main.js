@@ -10,12 +10,14 @@
       this.init();      
     }   
     
-    App.prototype.init = function(){
+    App.prototype.init = function(){      
+      this.initIntroSteps();
       this.initDraggable();
       this.initControls();
       this.initButtons();
       this.initCanvasMask('#canvas-mask','#canvas-masked','#present');
       this.initVideoFeed();
+      this.initFullscreen();
     };
     
     App.prototype.initButtons = function(){
@@ -41,6 +43,24 @@
         e.gesture.preventDefault();
         that.toggleCameraMask();
       });
+      $('.camera-submit-button').hammer().on('tap',function(e){
+        e.gesture.preventDefault();
+        that.doSubmitMode();
+      });
+      $('.submit-button').hammer().on('tap',function(e){
+        e.gesture.preventDefault();
+        $('#share').hide();
+      });
+      $('.caption-button').hammer().on('tap',function(e){
+        e.gesture.preventDefault();
+        $('#caption').show();
+        $('.caption-button').removeClass('active');
+      });
+      $('.close-button').hammer().on('tap',function(e){
+        e.gesture.preventDefault();
+        $('#caption').hide();
+        $('.caption-button').addClass('active');
+      }); 
     };
     
     App.prototype.initCanvasMask = function(mask_selector, masked_selector, image_masked){
@@ -110,6 +130,46 @@
       });
     };
     
+    App.prototype.initFullscreen = function(){
+      
+      $('body').keyup(function(e){
+        if(e.keyCode == 32){
+            if ((document.fullScreenElement && document.fullScreenElement !== null) ||    // alternative standard method
+              (!document.mozFullScreen && !document.webkitIsFullScreen)) {               // current working methods
+            if (document.documentElement.requestFullScreen) {
+              document.documentElement.requestFullScreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+              document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullScreen) {
+              document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+            }
+          }
+        }
+      });
+      
+      
+    };
+    
+    App.prototype.initIntroSteps = function(){
+      var that = this,
+          $steps = $('#intro-steps > .step'),
+          steps_length = $steps.length,
+          current_step = 0;
+      
+      $('.next-step').hammer().on('tap',function(e){
+        e.gesture.preventDefault();
+        current_step++;
+        if (current_step<steps_length) {
+          $steps.removeClass('active');
+          $steps.eq(current_step).addClass('active');
+        } else {
+          $('#intro-steps').hide();
+          $('#main').addClass('skin');
+          that.activateButton('.caption-button');
+        }        
+      });
+    };
+    
     App.prototype.initVideoFeed = function(){
       var that = this,
           gUM;
@@ -160,6 +220,7 @@
       $main.addClass('mask');
       // update buttons
       this.deactivateButton('.mask-mode-button');
+      this.deactivateButton('.caption-button');
       // update skinnable
       $('.skinnable').animate({
         opacity: 0
@@ -216,9 +277,13 @@
       this.initCanvasMask('#webcam-canvas-mask','#webcam-canvas-masked','#empty');
     };
     
+    App.prototype.doSubmitMode = function(){
+      $('#share').show();
+    };
+    
     App.prototype.drawStart = function($parent, e){
-      this.activateButton('.mask-toggle-button');
-      this.activateButton('.camera-mask-toggle-button');
+      this.activateButton('.mask-done-button');
+      this.activateButton('.camera-mask-done-button');
       
       this.updateLastPos($parent, e);
       
@@ -274,35 +339,44 @@
     App.prototype.toggleCameraMask = function(){
       var $mask = $('#webcam-canvas-mask'),
           $masked = $('#webcam-canvas-masked'),
-          $button = $('.camera-mask-toggle-button');
+          $button_done = $('.camera-mask-done-button'),
+          $button_back = $('.camera-mask-back-button'),
+          $submit_button = $('.camera-submit-button');
       if ($masked.hasClass('active')) {
         $masked.removeClass('active');
         $mask.addClass('active');
-        $button.text($button.attr('data-off'));
+        $button_back.removeClass('active');
+        $button_done.addClass('active');
+        $submit_button.removeClass('active');
         
       } else {
         $masked.addClass('active');
         $mask.removeClass('active');
-        $button.text($button.attr('data-on'));
+        $button_done.removeClass('active');
+        $button_back.addClass('active');
+        $submit_button.addClass('active');
       }
     };
     
     App.prototype.toggleMask = function(){
       var $mask = $('#canvas-mask'),
           $masked = $('#canvas-masked'),
-          $button = $('.mask-toggle-button'),
+          $button_done = $('.mask-done-button'),
+          $button_back = $('.mask-back-button'),
           $webcam_button = $('.camera-mode-button');
       if ($masked.hasClass('active')) {
         $masked.removeClass('active');
         $mask.addClass('active');
         $webcam_button.removeClass('active');
-        $button.text($button.attr('data-off'));
+        $button_back.removeClass('active');
+        $button_done.addClass('active');        
         
       } else {
         $masked.addClass('active');
         $mask.removeClass('active');
         $webcam_button.addClass('active');
-        $button.text($button.attr('data-on'));
+        $button_done.removeClass('active');
+        $button_back.addClass('active');
       }
     };
     
